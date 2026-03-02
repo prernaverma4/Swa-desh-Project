@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Order Successful{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow text-center">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 80px;"></i>
+                    </div>
+                    <h2 class="text-success mb-3">Payment Successful!</h2>
+                    <p class="lead">Thank you for your purchase</p>
+                    
+                    <div class="alert alert-success mt-4">
+                        <h5>Order Confirmation</h5>
+                        <p><strong>Order ID:</strong> #{{ order.id }}</p>
+                        <p><strong>Payment ID:</strong> {{ order.payment_id }}</p>
+                        <p><strong>Amount Paid:</strong> ₹{{ order.total_amount }}</p>
+                    </div>
+
+                    <div class="text-start mt-4">
+                        <h5>Order Details</h5>
+                        <table class="table">
+                            <tr>
+                                <td><strong>Product:</strong></td>
+                                <td>{{ order.product.name }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Quantity:</strong></td>
+                                <td>{{ order.quantity }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Artisan:</strong></td>
+                                <td>{{ order.product.artisan.name }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Shipping To:</strong></td>
+                                <td>{{ order.customer_name }}<br>{{ order.shipping_address }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Contact:</strong></td>
+                                <td>{{ order.customer_email }}<br>{{ order.customer_phone }}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="alert alert-info mt-4">
+                        <i class="fas fa-info-circle"></i> A confirmation email has been sent to <strong>{{ order.customer_email }}</strong>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{{ url_for('my_orders') }}" class="btn btn-primary">
+                            <i class="fas fa-list"></i> View My Orders
+                        </a>
+                        <a href="{{ url_for('product_list') }}" class="btn btn-secondary">
+                            <i class="fas fa-shopping-bag"></i> Continue Shopping
+                        </a>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-home"></i> Go to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

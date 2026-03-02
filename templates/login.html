@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In – Digital Catalyst{% endblock %}
+
+{% block content %}
+<div class="auth-container auth-container-login-full">
+    <div class="container py-4">
+        <div class="text-center mb-4">
+            <a href="{{ url_for('landing') }}" class="text-white text-decoration-none d-inline-flex align-items-center">
+                <i class="bi bi-hexagon-fill me-2 fs-4"></i>
+                <span class="fw-bold">Digital Catalyst</span>
+            </a>
+        </div>
+        <h1 class="login-full-title text-center text-white mb-4">Sign In</h1>
+        <p class="text-center text-white-50 mb-4">Choose how you want to sign in to the platform.</p>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Sign In (Regular User) -->
+            <div class="col-lg-5 col-md-6">
+                <div class="auth-card auth-card-login">
+                    <div class="auth-card-header">
+                        <i class="bi bi-person-circle"></i>
+                        <h2>Sign In</h2>
+                        <p class="mb-0">Regular user access</p>
+                    </div>
+                    <form method="POST" action="{{ url_for('login') }}">
+                        <input type="hidden" name="login_type" value="user">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required placeholder="Enter username">
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required placeholder="Enter password">
+                        </div>
+                        <button type="submit" class="btn btn-custom-primary w-100 mb-3">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                        </button>
+                    </form>
+                    <div class="auth-demo-creds">
+                        <small class="text-muted">Demo: <code>admin</code> / <code>admin123</code></small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login as Manufacturer -->
+            <div class="col-lg-5 col-md-6">
+                <div class="auth-card auth-card-manufacturer">
+                    <div class="auth-card-header auth-card-header-manufacturer">
+                        <i class="bi bi-gear-wide-connected"></i>
+                        <h2>Login as Manufacturer</h2>
+                        <p class="mb-0">Manufacturer / partner access</p>
+                    </div>
+                    <form method="POST" action="{{ url_for('login') }}">
+                        <input type="hidden" name="login_type" value="manufacturer">
+                        <div class="mb-3">
+                            <label for="username_mfr" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username_mfr" name="username" required placeholder="Enter username">
+                        </div>
+                        <div class="mb-4">
+                            <label for="password_mfr" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password_mfr" name="password" required placeholder="Enter password">
+                        </div>
+                        <button type="submit" class="btn btn-manufacturer w-100 mb-3">
+                            <i class="bi bi-gear-wide-connected me-2"></i>Login as Manufacturer
+                        </button>
+                    </form>
+                    <div class="auth-demo-creds">
+                        <small class="text-muted">Demo: <code>manufacturer</code> / <code>manufacturer123</code></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <p class="text-white mb-2">Don't have an account?</p>
+            <a href="{{ url_for('register') }}" class="btn btn-outline-light">Register here</a>
+        </div>
+
+        <p class="text-center mt-4 mb-0" style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">
+            <i class="bi bi-chat-dots me-1"></i>Need help? Click <strong>Chat</strong> at the bottom-right.
+        </p>
+    </div>
+</div>
+{% endblock %}

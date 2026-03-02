@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Hotels API</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .hotel { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .hotel h3 { margin: 0 0 10px 0; color: #2C6E7C; }
+        .price { font-size: 24px; color: #4ECDC4; font-weight: bold; }
+        button { padding: 10px 20px; background: #4ECDC4; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #2C6E7C; }
+        #status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Hotel Booking System Test</h1>
+    
+    <button onclick="testAPI()">Test API Connection</button>
+    <button onclick="loadHotels()">Load Hotels</button>
+    
+    <div id="status"></div>
+    <div id="hotels"></div>
+    
+    <script>
+        function testAPI() {
+            const status = document.getElementById('status');
+            status.innerHTML = 'Testing API...';
+            status.className = '';
+            
+            fetch('http://localhost:5002/api/hotels/all')
+                .then(response => {
+                    if (!response.ok) throw new Error('API returned ' + response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    status.innerHTML = `✓ API Working! Found ${data.hotel_count} hotels`;
+                    status.className = 'success';
+                })
+                .catch(error => {
+                    status.innerHTML = `✗ API Error: ${error.message}`;
+                    status.className = 'error';
+                });
+        }
+        
+        function loadHotels() {
+            const hotelsDiv = document.getElementById('hotels');
+            const status = document.getElementById('status');
+            
+            status.innerHTML = 'Loading hotels...';
+            status.className = '';
+            hotelsDiv.innerHTML = '';
+            
+            fetch('http://localhost:5002/api/hotels/all')
+                .then(response => response.json())
+                .then(data => {
+                    status.innerHTML = `✓ Loaded ${data.hotel_count} hotels`;
+                    status.className = 'success';
+                    
+                    if (data.hotels && data.hotels.length > 0) {
+                        data.hotels.forEach(hotel => {
+                            const hotelDiv = document.createElement('div');
+                            hotelDiv.className = 'hotel';
+                            hotelDiv.innerHTML = `
+                                <h3>${hotel.name}</h3>
+                                <p><strong>Location:</strong> ${hotel.location}</p>
+                                <p><strong>Near:</strong> ${hotel.heritage_name}</p>
+                                <p><strong>Rating:</strong> ${hotel.rating || 'N/A'} ⭐</p>
+                                <p class="price">₹${hotel.price_per_night.toLocaleString()} / night</p>
+                                <p>${hotel.description}</p>
+                                <a href="http://localhost:5002/hotel/book/${hotel.id}" target="_blank">
+                                    <button>Book Now</button>
+                                </a>
+                            `;
+                            hotelsDiv.appendChild(hotelDiv);
+                        });
+                    }
+                })
+                .catch(error => {
+                    status.innerHTML = `✗ Error: ${error.message}`;
+                    status.className = 'error';
+                });
+        }
+        
+        // Auto-test on load
+        window.onload = function() {
+            testAPI();
+        };
+    </script>
+</body>
+</html>

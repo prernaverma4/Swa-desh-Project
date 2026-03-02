@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Artisans - Digital Catalyst{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="section-title">
+                <i class="bi bi-palette me-2"></i>Artisans & MSME
+            </h1>
+            <p class="text-muted">Support and empower India's traditional craftspeople</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('add_artisan') }}" class="btn btn-custom-primary">
+                <i class="bi bi-plus-circle me-2"></i>Add Artisan
+            </a>
+        </div>
+    </div>
+    
+    <!-- Search & Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <form method="GET" action="{{ url_for('artisan_list') }}">
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <input type="text" name="search" class="form-control form-control-custom" 
+                                       placeholder="Search by name..." value="{{ request.args.get('search', '') }}">
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <select name="state" class="form-control form-control-custom">
+                                    <option value="">All States</option>
+                                    {% for state in states %}
+                                        <option value="{{ state }}" {% if request.args.get('state') == state %}selected{% endif %}>{{ state }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <select name="craft" class="form-control form-control-custom">
+                                    <option value="">All Crafts</option>
+                                    {% for craft in crafts %}
+                                        <option value="{{ craft }}" {% if request.args.get('craft') == craft %}selected{% endif %}>{{ craft }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <button type="submit" class="btn btn-custom-primary w-100">
+                                    <i class="bi bi-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Artisans Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="table-custom">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Image</th>
+                            <th>Name</th>
+                            <th>Craft</th>
+                            <th>State</th>
+                            <th>Product Price</th>
+                            <th>Contact</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if artisans %}
+                            {% for artisan in artisans %}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('artisan_detail', id=artisan.id) }}" class="d-block text-decoration-none">
+                                        <img src="{{ artisan.image_or_placeholder() }}" alt="{{ artisan.name }}" class="list-thumb rounded" width="56" height="56" style="object-fit: cover;">
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('artisan_detail', id=artisan.id) }}" class="text-dark fw-bold text-decoration-none">{{ artisan.name }}</a>
+                                </td>
+                                <td><span class="badge badge-teal">{{ artisan.craft }}</span></td>
+                                <td><span class="badge badge-orange">{{ artisan.state }}</span></td>
+                                <td><strong style="color: var(--accent-gold);">₹{{ "{:,.0f}".format(artisan.product_price) }}</strong></td>
+                                <td>{{ artisan.contact or 'N/A' }}</td>
+                                <td style="max-width: 250px;">{{ artisan.description[:80] if artisan.description else 'N/A' }}{% if artisan.description and artisan.description|length > 80 %}...{% endif %}</td>
+                                <td>
+                                    <a href="{{ url_for('artisan_detail', id=artisan.id) }}" class="btn btn-sm btn-outline-secondary me-1" title="View">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('artisan_products', artisan_id=artisan.id) }}" class="btn btn-sm btn-outline-success me-1" title="Products">
+                                        <i class="bi bi-bag"></i>
+                                    </a>
+                                    <a href="{{ url_for('edit_artisan', id=artisan.id) }}" class="btn btn-sm btn-outline-primary me-1" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form method="POST" action="{{ url_for('delete_artisan', id=artisan.id) }}" style="display: inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                onclick="return confirm('Are you sure you want to delete this artisan?')" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center py-5">
+                                    <i class="bi bi-inbox" style="font-size: 3rem; color: var(--text-muted);"></i>
+                                    <p class="mt-2 text-muted">No artisans found. Add your first artisan!</p>
+                                    <a href="{{ url_for('add_artisan') }}" class="btn btn-custom-primary mt-2">
+                                        <i class="bi bi-plus-circle me-2"></i>Add Artisan
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

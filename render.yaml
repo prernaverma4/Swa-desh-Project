@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: digital-catalyst
+    env: python
+    buildCommand: bash build.sh
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120 --workers 2 --log-level info
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: digital-catalyst-db
+          property: connectionString
+
+databases:
+  - name: digital-catalyst-db
+    databaseName: digital_catalyst
+    user: digital_catalyst_user

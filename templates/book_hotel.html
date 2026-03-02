@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Book Hotel - Digital Catalyst{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('heritage_detail', id=hotel.heritage_id) }}">{{ hotel.heritage_site.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Book Hotel</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <i class="bi bi-calendar-check me-2"></i>Book Your Stay
+                </div>
+                <div class="card-body-custom">
+                    <form method="POST" id="bookingForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="check_in_date" class="form-label form-label-custom">Check-in Date *</label>
+                                <input type="date" class="form-control form-control-custom" id="check_in_date" 
+                                       name="check_in_date" required min="{{ today }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="check_out_date" class="form-label form-label-custom">Check-out Date *</label>
+                                <input type="date" class="form-control form-control-custom" id="check_out_date" 
+                                       name="check_out_date" required min="{{ today }}">
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Price:</strong> ₹{{ "{:,.0f}".format(hotel.price_per_night) }} per night
+                        </div>
+                        
+                        <div id="priceCalculation" class="alert alert-success" style="display: none;">
+                            <h5>Booking Summary</h5>
+                            <p class="mb-1"><strong>Number of Nights:</strong> <span id="nights">0</span></p>
+                            <p class="mb-0"><strong>Total Price:</strong> ₹<span id="totalPrice">0</span></p>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-custom-primary">
+                                <i class="bi bi-check-circle me-2"></i>Confirm Booking
+                            </button>
+                            <a href="{{ url_for('heritage_detail', id=hotel.heritage_id) }}" class="btn btn-custom-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <img src="{{ hotel.image_or_placeholder() }}" class="card-img-top" alt="{{ hotel.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ hotel.name }}</h5>
+                    {% if hotel.rating %}
+                    <p class="mb-2">
+                        <span class="badge bg-warning text-dark">
+                            <i class="bi bi-star-fill"></i> {{ hotel.rating }}
+                        </span>
+                    </p>
+                    {% endif %}
+                    <p class="card-text text-muted small">
+                        <i class="bi bi-geo-alt"></i> {{ hotel.location }}
+                    </p>
+                    <p class="card-text">{{ hotel.description }}</p>
+                    <hr>
+                    <h4 class="text-primary">₹{{ "{:,.0f}".format(hotel.price_per_night) }}</h4>
+                    <small class="text-muted">per night</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Calculate total price when dates change
+    const checkInInput = document.getElementById('check_in_date');
+    const checkOutInput = document.getElementById('check_out_date');
+    const pricePerNight = {{ hotel.price_per_night }};
+    
+    function calculatePrice() {
+        const checkIn = new Date(checkInInput.value);
+        const checkOut = new Date(checkOutInput.value);
+        
+        if (checkIn && checkOut && checkOut > checkIn) {
+            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            const totalPrice = nights * pricePerNight;
+            
+            document.getElementById('nights').textContent = nights;
+            document.getElementById('totalPrice').textContent = totalPrice.toLocaleString('en-IN');
+            document.getElementById('priceCalculation').style.display = 'block';
+        } else {
+            document.getElementById('priceCalculation').style.display = 'none';
+        }
+    }
+    
+    checkInInput.addEventListener('change', calculatePrice);
+    checkOutInput.addEventListener('change', calculatePrice);
+    
+    // Validate dates on form submit
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+        const checkIn = new Date(checkInInput.value);
+        const checkOut = new Date(checkOutInput.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (checkIn < today) {
+            e.preventDefault();
+            alert('Check-in date cannot be in the past');
+            return false;
+        }
+        
+        if (checkOut <= checkIn) {
+            e.preventDefault();
+            alert('Check-out date must be after check-in date');
+            return false;
+        }
+    });
+</script>
+{% endblock %}

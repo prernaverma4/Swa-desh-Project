@@ -1,0 +1,487 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head><base href='http://127.0.0.1:5002/'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products (Manufacturer View) - Digital Catalyst</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <!-- Google Fonts - Distinctive typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Work+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    
+</head>
+
+<body>
+    
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand brand-logo" href="/dashboard">
+                <i class="bi bi-hexagon-fill brand-icon"></i>
+                <span class="brand-text">Digital Catalyst</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    
+
+                    <li class="nav-item">
+                        <a class="nav-link active"
+                            href="/Products2">
+                            <i class="bi bi-bag me-1"></i> Products
+                        </a>
+                    </li>
+
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle user-menu" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i> testuser
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/logout">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+
+    <!-- Flash Messages -->
+    
+    
+    
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+<div class="container py-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
+        <div>
+            <h2 class="fw-bold mb-1">Your Products</h2>
+            <p class="text-muted mb-0">Manage your district specialties.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <form action="/Products2" method="GET" class="d-flex">
+                <select name="state" class="form-select border-0 shadow-sm me-2" onchange="this.form.submit()"
+                    style="min-width: 180px;">
+                    <option value="">All States</option>
+                    
+                    
+                    <option value="Andhra Pradesh" >Andhra Pradesh</option>
+                    
+                    <option value="Arunachal Pradesh" >Arunachal Pradesh</option>
+                    
+                    <option value="Assam" >Assam</option>
+                    
+                    <option value="Bihar" >Bihar</option>
+                    
+                    <option value="Chhattisgarh" >Chhattisgarh</option>
+                    
+                    <option value="Goa" >Goa</option>
+                    
+                    <option value="Gujarat" >Gujarat</option>
+                    
+                    <option value="Haryana" >Haryana</option>
+                    
+                    <option value="Himachal Pradesh" >Himachal Pradesh</option>
+                    
+                    <option value="Jharkhand" >Jharkhand</option>
+                    
+                    <option value="Karnataka" >Karnataka</option>
+                    
+                    <option value="Kerala" >Kerala</option>
+                    
+                    <option value="Madhya Pradesh" >Madhya Pradesh</option>
+                    
+                    <option value="Maharashtra" selected>Maharashtra</option>
+                    
+                    <option value="Manipur" >Manipur</option>
+                    
+                    <option value="Meghalaya" >Meghalaya</option>
+                    
+                    <option value="Mizoram" >Mizoram</option>
+                    
+                    <option value="Nagaland" >Nagaland</option>
+                    
+                    <option value="Odisha" >Odisha</option>
+                    
+                    <option value="Punjab" >Punjab</option>
+                    
+                    <option value="Rajasthan" >Rajasthan</option>
+                    
+                    <option value="Sikkim" >Sikkim</option>
+                    
+                    <option value="Tamil Nadu" >Tamil Nadu</option>
+                    
+                    <option value="Telangana" >Telangana</option>
+                    
+                    <option value="Tripura" >Tripura</option>
+                    
+                    <option value="Uttar Pradesh" >Uttar Pradesh</option>
+                    
+                    <option value="Uttarakhand" >Uttarakhand</option>
+                    
+                    <option value="West Bengal" >West Bengal</option>
+                    
+                </select>
+            </form>
+            <a href="/product/add"
+                class="btn btn-teal text-white rounded-pill px-4 py-2 shadow-sm text-nowrap">
+                <i class="bi bi-plus-lg me-2"></i> List new product
+            </a>
+        </div>
+    </div>
+
+    <!-- Products Grid -->
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        
+        <div class="col">
+            <div class="card h-100 border-0 shadow-hover product-card position-relative">
+                <!-- Product Image -->
+                <div class="product-image-container rounded-3 overflow-hidden position-relative">
+                    
+                    <img src="https://placehold.co/400x300?text=Blue+Paithani" class="card-img-top object-fit-cover" alt="Royal Blue Paithani Saree"
+                        style="height: 250px;">
+                    
+                </div>
+
+                <!-- Product Details -->
+                <div class="card-body px-0 pt-3">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h6 class="card-title fw-bold mb-0 text-truncate" style="max-width: 70%;">Royal Blue Paithani Saree
+                        </h6>
+                        <span class="d-flex align-items-center small">
+                            <i class="bi bi-star-fill text-warning me-1" style="font-size: 0.8rem;"></i>
+                            <span>New</span>
+                        </span>
+                    </div>
+                    <p class="card-text text-muted small mb-1">Aurangabad, Maharashtra</p>
+                    <p class="card-text text-muted small mb-2 text-truncate">Handwoven silk saree with peacock motifs.</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-bold">₹18,000</span> <span
+                                class="text-muted small">per item</span>
+                        </div>
+                        <a href="/product/1"
+                            class="btn btn-outline-teal btn-sm rounded-pill px-3">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col">
+            <div class="card h-100 border-0 shadow-hover product-card position-relative">
+                <!-- Product Image -->
+                <div class="product-image-container rounded-3 overflow-hidden position-relative">
+                    
+                    <img src="https://placehold.co/400x300?text=Green+Dupatta" class="card-img-top object-fit-cover" alt="Green Paithani Dupatta"
+                        style="height: 250px;">
+                    
+                </div>
+
+                <!-- Product Details -->
+                <div class="card-body px-0 pt-3">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h6 class="card-title fw-bold mb-0 text-truncate" style="max-width: 70%;">Green Paithani Dupatta
+                        </h6>
+                        <span class="d-flex align-items-center small">
+                            <i class="bi bi-star-fill text-warning me-1" style="font-size: 0.8rem;"></i>
+                            <span>New</span>
+                        </span>
+                    </div>
+                    <p class="card-text text-muted small mb-1">Aurangabad, Maharashtra</p>
+                    <p class="card-text text-muted small mb-2 text-truncate">Pure silk dupatta with golden zari border.</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-bold">₹5,000</span> <span
+                                class="text-muted small">per item</span>
+                        </div>
+                        <a href="/product/2"
+                            class="btn btn-outline-teal btn-sm rounded-pill px-3">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col">
+            <div class="card h-100 border-0 shadow-hover product-card position-relative">
+                <!-- Product Image -->
+                <div class="product-image-container rounded-3 overflow-hidden position-relative">
+                    
+                    <img src="https://placehold.co/400x300?text=Kolhapuri+Chappals" class="card-img-top object-fit-cover" alt="Kolhapuri Chappals"
+                        style="height: 250px;">
+                    
+                </div>
+
+                <!-- Product Details -->
+                <div class="card-body px-0 pt-3">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h6 class="card-title fw-bold mb-0 text-truncate" style="max-width: 70%;">Kolhapuri Chappals
+                        </h6>
+                        <span class="d-flex align-items-center small">
+                            <i class="bi bi-star-fill text-warning me-1" style="font-size: 0.8rem;"></i>
+                            <span>New</span>
+                        </span>
+                    </div>
+                    <p class="card-text text-muted small mb-1">Kolhapur, Maharashtra</p>
+                    <p class="card-text text-muted small mb-2 text-truncate">Traditional handcrafted leather footwear from Kolhapur.</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-bold">₹1,200</span> <span
+                                class="text-muted small">per item</span>
+                        </div>
+                        <a href="/product/4"
+                            class="btn btn-outline-teal btn-sm rounded-pill px-3">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col">
+            <div class="card h-100 border-0 shadow-hover product-card position-relative">
+                <!-- Product Image -->
+                <div class="product-image-container rounded-3 overflow-hidden position-relative">
+                    
+                    <img src="https://placehold.co/400x300?text=Warli+Painting" class="card-img-top object-fit-cover" alt="Warli Painting"
+                        style="height: 250px;">
+                    
+                </div>
+
+                <!-- Product Details -->
+                <div class="card-body px-0 pt-3">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h6 class="card-title fw-bold mb-0 text-truncate" style="max-width: 70%;">Warli Painting
+                        </h6>
+                        <span class="d-flex align-items-center small">
+                            <i class="bi bi-star-fill text-warning me-1" style="font-size: 0.8rem;"></i>
+                            <span>New</span>
+                        </span>
+                    </div>
+                    <p class="card-text text-muted small mb-1">Palghar, Maharashtra</p>
+                    <p class="card-text text-muted small mb-2 text-truncate">Tribal art form from the North Sahyadri Range in Maharashtra.</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-bold">₹3,500</span> <span
+                                class="text-muted small">per item</span>
+                        </div>
+                        <a href="/product/5"
+                            class="btn btn-outline-teal btn-sm rounded-pill px-3">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col">
+            <div class="card h-100 border-0 shadow-hover product-card position-relative">
+                <!-- Product Image -->
+                <div class="product-image-container rounded-3 overflow-hidden position-relative">
+                    
+                    <img src="https://placehold.co/400x300?text=Solapuri+Chaddar" class="card-img-top object-fit-cover" alt="Solapuri Chaddar"
+                        style="height: 250px;">
+                    
+                </div>
+
+                <!-- Product Details -->
+                <div class="card-body px-0 pt-3">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h6 class="card-title fw-bold mb-0 text-truncate" style="max-width: 70%;">Solapuri Chaddar
+                        </h6>
+                        <span class="d-flex align-items-center small">
+                            <i class="bi bi-star-fill text-warning me-1" style="font-size: 0.8rem;"></i>
+                            <span>New</span>
+                        </span>
+                    </div>
+                    <p class="card-text text-muted small mb-1">Solapur, Maharashtra</p>
+                    <p class="card-text text-muted small mb-2 text-truncate">Famous cotton bed sheets from Solapur, known for their durability.</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-bold">₹850</span> <span
+                                class="text-muted small">per item</span>
+                        </div>
+                        <a href="/product/6"
+                            class="btn btn-outline-teal btn-sm rounded-pill px-3">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col">
+            <div class="card h-100 border-0 shadow-hover product-card position-relative">
+                <!-- Product Image -->
+                <div class="product-image-container rounded-3 overflow-hidden position-relative">
+                    
+                    <img src="https://placehold.co/400x300?text=Nashik+Grapes" class="card-img-top object-fit-cover" alt="Nashik Grapes (Box)"
+                        style="height: 250px;">
+                    
+                </div>
+
+                <!-- Product Details -->
+                <div class="card-body px-0 pt-3">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h6 class="card-title fw-bold mb-0 text-truncate" style="max-width: 70%;">Nashik Grapes (Box)
+                        </h6>
+                        <span class="d-flex align-items-center small">
+                            <i class="bi bi-star-fill text-warning me-1" style="font-size: 0.8rem;"></i>
+                            <span>New</span>
+                        </span>
+                    </div>
+                    <p class="card-text text-muted small mb-1">Nashik, Maharashtra</p>
+                    <p class="card-text text-muted small mb-2 text-truncate">Fresh, export-quality grapes from Nashik, the wine capital of India.</p>
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-bold">₹400</span> <span
+                                class="text-muted small">per item</span>
+                        </div>
+                        <a href="/product/7"
+                            class="btn btn-outline-teal btn-sm rounded-pill px-3">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+</div>
+
+<style>
+    .btn-teal {
+        background-color: #008080;
+        /* Teal color */
+        border-color: #008080;
+    }
+
+    .btn-teal:hover {
+        background-color: #006666;
+        border-color: #006666;
+    }
+
+    .shadow-hover {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .shadow-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .product-image-container {
+        border-radius: 12px;
+        /* Airbnb-style rounded corners */
+    }
+
+    .btn-outline-teal {
+        color: #008080;
+        border-color: #008080;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-teal:hover {
+        background-color: #008080;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 128, 128, 0.2);
+    }
+
+    .z-index-1 {
+        z-index: 10;
+    }
+</style>
+
+    </main>
+
+    <!-- Footer -->
+    
+    <footer class="footer-custom mt-5">
+        <div class="container">
+            <div class="row py-4">
+                <div class="col-md-6">
+                    <p class="mb-0 footer-text">
+                        <i class="bi bi-hexagon-fill me-2" style="color: var(--accent-saffron);"></i>
+                        Digital Catalyst - Empowering India's Heritage & Economy
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0 footer-text">
+                        Made with <i class="bi bi-heart-fill" style="color: var(--accent-coral);"></i> for India | 2026
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="/static/js/js"></script>
+
+    <!-- Chatbot widget - fixed bottom-right, always visible -->
+    <div id="chatbot-widget" class="chatbot-widget-visible">
+        <button type="button" id="chatbot-toggle" class="chatbot-toggle" aria-label="Open support chat"
+            title="Need help? Chat with us">
+            <i class="bi bi-chat-dots-fill"></i>
+            <span class="chatbot-toggle-label">Chat</span>
+        </button>
+        <div id="chatbot-panel" class="chatbot-panel" hidden>
+            <div class="chatbot-header">
+                <span><i class="bi bi-hexagon-fill me-2"></i>Support</span>
+                <button type="button" id="chatbot-close" class="chatbot-close" aria-label="Close chat"><i
+                        class="bi bi-x-lg"></i></button>
+            </div>
+            <div id="chatbot-messages" class="chatbot-messages">
+                <div class="chatbot-msg bot">
+                    <div class="chatbot-bubble">Hello! I'm your Digital Catalyst assistant. Ask me about heritage sites,
+                        artisans, registration, or how to use the platform.</div>
+                </div>
+            </div>
+            <div class="chatbot-input-wrap">
+                <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Type your question..."
+                    maxlength="500" autocomplete="off">
+                <button type="button" id="chatbot-send" class="chatbot-send" aria-label="Send">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+</body>
+
+</html>

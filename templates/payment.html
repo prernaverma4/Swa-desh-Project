@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Payment - Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4><i class="fas fa-credit-card"></i> Payment Gateway</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> <strong>Demo Mode:</strong> This is a demo payment gateway. In production, integrate with Razorpay, Stripe, or PayPal.
+                    </div>
+
+                    <h5>Order Details</h5>
+                    <table class="table">
+                        <tr>
+                            <td><strong>Order ID:</strong></td>
+                            <td>#{{ order.id }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Product:</strong></td>
+                            <td>{{ order.product.name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Quantity:</strong></td>
+                            <td>{{ order.quantity }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Customer:</strong></td>
+                            <td>{{ order.customer_name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Amount:</strong></td>
+                            <td><h4 class="text-success">₹{{ order.total_amount }}</h4></td>
+                        </tr>
+                    </table>
+
+                    <hr>
+
+                    <h5>Select Payment Method</h5>
+                    <form method="POST" action="{{ url_for('process_payment', order_id=order.id) }}">
+                        <div class="mb-3">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="payment_method" id="upi" value="upi" checked>
+                                <label class="form-check-label" for="upi">
+                                    <i class="fas fa-mobile-alt"></i> UPI / PhonePe / Google Pay
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="payment_method" id="card" value="card">
+                                <label class="form-check-label" for="card">
+                                    <i class="fas fa-credit-card"></i> Credit / Debit Card
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="payment_method" id="netbanking" value="netbanking">
+                                <label class="form-check-label" for="netbanking">
+                                    <i class="fas fa-university"></i> Net Banking
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod">
+                                <label class="form-check-label" for="cod">
+                                    <i class="fas fa-money-bill-wave"></i> Cash on Delivery
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check-circle"></i> Complete Payment - ₹{{ order.total_amount }}
+                            </button>
+                            <a href="{{ url_for('product_detail', id=order.product_id) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+
+                    <div class="mt-4 text-center text-muted">
+                        <small><i class="fas fa-lock"></i> Secure Payment | Your data is encrypted</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

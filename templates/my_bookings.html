@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}My Bookings - Digital Catalyst{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <h1 class="mb-4">
+        <i class="bi bi-calendar-check me-2"></i>My Hotel Bookings
+    </h1>
+    
+    {% if bookings %}
+    <div class="row">
+        {% for booking in bookings %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm {% if booking.booking_status == 'Cancelled' %}border-danger{% endif %}">
+                <div class="card-header {% if booking.booking_status == 'Confirmed' %}bg-success text-white{% else %}bg-danger text-white{% endif %}">
+                    <i class="bi bi-{% if booking.booking_status == 'Confirmed' %}check-circle{% else %}x-circle{% endif %} me-2"></i>
+                    {{ booking.booking_status }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ booking.hotel.name }}</h5>
+                    <p class="card-text text-muted small mb-3">
+                        <i class="bi bi-geo-alt"></i> {{ booking.hotel.location[:60] }}{% if booking.hotel.location|length > 60 %}...{% endif %}
+                    </p>
+                    
+                    <div class="mb-2">
+                        <strong><i class="bi bi-calendar-event"></i> Check-in:</strong><br>
+                        {{ booking.check_in_date.strftime('%B %d, %Y') }}
+                    </div>
+                    <div class="mb-2">
+                        <strong><i class="bi bi-calendar-x"></i> Check-out:</strong><br>
+                        {{ booking.check_out_date.strftime('%B %d, %Y') }}
+                    </div>
+                    <div class="mb-2">
+                        <strong><i class="bi bi-moon-stars"></i> Nights:</strong> {{ booking.nights }}
+                    </div>
+                    <div class="mb-3">
+                        <strong><i class="bi bi-currency-rupee"></i> Total Price:</strong>
+                        <h4 class="text-primary d-inline">₹{{ "{:,.0f}".format(booking.total_price) }}</h4>
+                    </div>
+                    
+                    <small class="text-muted">
+                        Booked on: {{ booking.created_at.strftime('%b %d, %Y') }}
+                    </small>
+                    
+                    {% if booking.booking_status == 'Confirmed' %}
+                    <hr>
+                    <form method="POST" action="{{ url_for('cancel_booking', id=booking.id) }}" 
+                          onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                            <i class="bi bi-x-circle me-2"></i>Cancel Booking
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-muted small">
+                    <a href="{{ url_for('heritage_detail', id=booking.hotel.heritage_id) }}">
+                        View {{ booking.hotel.heritage_site.name }}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>
+        You haven't made any hotel bookings yet. 
+        <a href="{{ url_for('heritage_list') }}" class="alert-link">Explore heritage sites</a> 
+        to find hotels near them.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

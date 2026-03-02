@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}{{ artisan.name }} - Digital Catalyst{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('artisan_list') }}">Artisans</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ artisan.name }}</li>
+        </ol>
+    </nav>
+    <div class="row">
+        <div class="col-lg-5 col-md-6 mb-4">
+            <div class="detail-image-wrap">
+                <img src="{{ artisan.image_or_placeholder() }}" alt="{{ artisan.name }} - {{ artisan.craft }}" class="detail-image img-fluid rounded">
+            </div>
+        </div>
+        <div class="col-lg-7 col-md-6">
+            <h1 class="section-title mb-2">{{ artisan.name }}</h1>
+            <p class="mb-3">
+                <span class="badge badge-teal me-2">{{ artisan.craft }}</span>
+                <span class="badge badge-orange">{{ artisan.state }}</span>
+            </p>
+            <div class="detail-meta mb-4">
+                <span class="detail-meta-item detail-price">
+                    <i class="bi bi-currency-rupee me-1"></i>₹{{ "{:,.0f}".format(artisan.product_price) }}
+                </span>
+                {% if artisan.contact %}
+                <span class="detail-meta-item">
+                    <i class="bi bi-telephone me-1"></i>{{ artisan.contact }}
+                </span>
+                {% endif %}
+            </div>
+            <div class="card-custom mb-4">
+                <div class="card-header-custom">
+                    <i class="bi bi-info-circle me-2"></i>About
+                </div>
+                <div class="card-body-custom">
+                    <p class="mb-0">{{ artisan.description or 'No description available.' }}</p>
+                </div>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{{ url_for('edit_artisan', id=artisan.id) }}" class="btn btn-custom-primary">
+                    <i class="bi bi-pencil me-2"></i>Edit
+                </a>
+                <a href="{{ url_for('artisan_list') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to list
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

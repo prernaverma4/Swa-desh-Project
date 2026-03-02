@@ -1,0 +1,512 @@
+{% extends "base.html" %}
+
+{% block title %}Heritage Sites Map - Digital Catalyst{% endblock %}
+
+{% block extra_css %}
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+<style>
+    #map {
+        height: 600px;
+        width: 100%;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .map-container {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .filter-panel {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+    }
+    
+    .filter-panel h5 {
+        color: var(--primary-navy);
+        margin-bottom: 1rem;
+    }
+    
+    .state-filter-btn {
+        margin: 0.25rem;
+        border-radius: 20px;
+        padding: 0.4rem 1rem;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+    
+    .state-filter-btn.active {
+        background-color: var(--primary-teal);
+        border-color: var(--primary-teal);
+        color: white;
+    }
+    
+    .leaflet-popup-content {
+        margin: 1rem;
+        min-width: 200px;
+    }
+    
+    .popup-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary-navy);
+        margin-bottom: 0.5rem;
+    }
+    
+    .popup-info {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.3rem;
+    }
+    
+    .popup-link {
+        display: inline-block;
+        margin-top: 0.5rem;
+        color: var(--primary-teal);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .popup-link:hover {
+        color: var(--accent-saffron);
+    }
+    
+    .stats-card {
+        background: linear-gradient(135deg, var(--primary-teal), var(--primary-navy));
+        color: white;
+        padding: 1rem;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    
+    .stats-card h3 {
+        font-size: 2rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stats-card p {
+        margin: 0;
+        opacity: 0.9;
+    }
+    
+    .view-toggle {
+        margin-bottom: 1.5rem;
+    }
+    
+    .view-toggle .btn {
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 500;
+    }
+    
+    .hotel-list-container {
+        display: none;
+    }
+    
+    .hotel-list-container.active {
+        display: block;
+    }
+    
+    .map-container {
+        display: none;
+    }
+    
+    .map-container.active {
+        display: block;
+    }
+    
+    .hotel-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hotel-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .hotel-card-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    .hotel-card-body {
+        padding: 1.5rem;
+    }
+    
+    .hotel-card-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--primary-navy);
+        margin-bottom: 0.5rem;
+    }
+    
+    .hotel-card-location {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .hotel-card-price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-teal);
+        margin-bottom: 0.5rem;
+    }
+    
+    .hotel-card-rating {
+        display: inline-block;
+        background: #FFD700;
+        color: #333;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="bi bi-geo-alt-fill text-danger"></i>
+                Heritage Sites Map
+            </h1>
+            <p class="lead text-muted">Explore India's cultural heritage on an interactive map</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h3 id="total-sites">{{ sites|length }}</h3>
+                <p>Heritage Sites</p>
+            </div>
+            
+            <div class="filter-panel">
+                <h5><i class="bi bi-funnel"></i> Filter by State</h5>
+                <button class="btn btn-sm btn-outline-primary state-filter-btn active" data-state="all">
+                    All States
+                </button>
+                {% for state in states %}
+                <button class="btn btn-sm btn-outline-primary state-filter-btn" data-state="{{ state }}">
+                    {{ state }}
+                </button>
+                {% endfor %}
+            </div>
+            
+            <div class="filter-panel">
+                <h5><i class="bi bi-tag"></i> Filter by Category</h5>
+                <button class="btn btn-sm btn-outline-secondary state-filter-btn active" data-category="all">
+                    All Categories
+                </button>
+                {% for category in categories %}
+                <button class="btn btn-sm btn-outline-secondary state-filter-btn" data-category="{{ category }}">
+                    {{ category }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <!-- View Toggle Buttons -->
+            <div class="view-toggle text-center">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary active" id="mapViewBtn">
+                        <i class="bi bi-map"></i> Map View
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="hotelViewBtn">
+                        <i class="bi bi-building"></i> Hotels List
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Map Container -->
+            <div class="map-container active" id="mapContainer">
+                <div id="map"></div>
+            </div>
+            
+            <!-- Hotels List Container -->
+            <div class="hotel-list-container" id="hotelListContainer">
+                <div id="hotelsList">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading hotels...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+
+<script>
+// Wait for DOM to be fully loaded before running JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Heritage sites data from backend
+    const heritageSites = {{ sites_json|safe }};
+    
+    // Initialize map centered on India
+    const map = L.map('map').setView([20.5937, 78.9629], 5);
+    
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18
+    }).addTo(map);
+    
+    // Store markers for filtering
+    let markers = [];
+    let currentStateFilter = 'all';
+    let currentCategoryFilter = 'all';
+    
+    // Custom icon colors by category
+    const categoryColors = {
+        'Temple': '#FF6B6B',
+        'Fort': '#4ECDC4',
+        'Monument': '#FFD93D',
+        'Palace': '#A8E6CF',
+        'Cave': '#95E1D3',
+        'default': '#FF6B6B'
+    };
+    
+    // Create custom marker icon
+    function createCustomIcon(category) {
+        const color = categoryColors[category] || categoryColors['default'];
+        return L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="background-color: ${color}; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+            iconSize: [30, 30],
+            iconAnchor: [15, 15],
+            popupAnchor: [0, -15]
+        });
+    }
+    
+    // Add markers for each heritage site
+    function addMarkers() {
+        // Clear existing markers
+        markers.forEach(marker => map.removeLayer(marker));
+        markers = [];
+        
+        heritageSites.forEach(site => {
+            if (!site.latitude || !site.longitude) return;
+            
+            // Apply filters
+            if (currentStateFilter !== 'all' && site.state !== currentStateFilter) return;
+            if (currentCategoryFilter !== 'all' && site.category !== currentCategoryFilter) return;
+            
+            const marker = L.marker([site.latitude, site.longitude], {
+                icon: createCustomIcon(site.category)
+            }).addTo(map);
+            
+            // Create popup content
+            const popupContent = `
+                <div class="popup-title">${site.name}</div>
+                <div class="popup-info">
+                    <i class="bi bi-geo-alt"></i> ${site.state}
+                </div>
+                <div class="popup-info">
+                    <i class="bi bi-tag"></i> ${site.category}
+                </div>
+                <div class="popup-info">
+                    <i class="bi bi-people"></i> ${site.annual_visitors.toLocaleString()} annual visitors
+                </div>
+                ${site.avg_rating ? `
+                <div class="popup-info">
+                    <i class="bi bi-star-fill text-warning"></i> ${site.avg_rating} (${site.review_count} reviews)
+                </div>
+                ` : ''}
+                <a href="/heritage/${site.id}" class="popup-link">
+                    View Details <i class="bi bi-arrow-right"></i>
+                </a>
+            `;
+            
+            marker.bindPopup(popupContent);
+            markers.push(marker);
+        });
+        
+        // Update stats
+        document.getElementById('total-sites').textContent = markers.length;
+        
+        // Fit map to markers if any exist
+        if (markers.length > 0) {
+            const group = L.featureGroup(markers);
+            map.fitBounds(group.getBounds().pad(0.1));
+        }
+    }
+    
+    // Initial markers
+    addMarkers();
+    
+    // State filter buttons
+    document.querySelectorAll('[data-state]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Update active state
+            document.querySelectorAll('[data-state]').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update filter and refresh markers
+            currentStateFilter = this.dataset.state;
+            addMarkers();
+        });
+    });
+    
+    // Category filter buttons
+    document.querySelectorAll('[data-category]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Update active state
+            document.querySelectorAll('[data-category]').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update filter and refresh markers
+            currentCategoryFilter = this.dataset.category;
+            addMarkers();
+        });
+    });
+    
+    // View toggle functionality
+    const mapViewBtn = document.getElementById('mapViewBtn');
+    const hotelViewBtn = document.getElementById('hotelViewBtn');
+    const mapContainer = document.getElementById('mapContainer');
+    const hotelListContainer = document.getElementById('hotelListContainer');
+    
+    mapViewBtn.addEventListener('click', function() {
+        mapViewBtn.classList.add('active');
+        mapViewBtn.classList.remove('btn-outline-primary');
+        mapViewBtn.classList.add('btn-primary');
+        hotelViewBtn.classList.remove('active');
+        hotelViewBtn.classList.remove('btn-primary');
+        hotelViewBtn.classList.add('btn-outline-primary');
+        
+        mapContainer.classList.add('active');
+        hotelListContainer.classList.remove('active');
+        
+        // Invalidate map size to fix display issues
+        setTimeout(() => map.invalidateSize(), 100);
+    });
+    
+    hotelViewBtn.addEventListener('click', function() {
+        console.log('Hotels List button clicked!');
+        hotelViewBtn.classList.add('active');
+        hotelViewBtn.classList.remove('btn-outline-primary');
+        hotelViewBtn.classList.add('btn-primary');
+        mapViewBtn.classList.remove('active');
+        mapViewBtn.classList.remove('btn-primary');
+        mapViewBtn.classList.add('btn-outline-primary');
+        
+        mapContainer.classList.remove('active');
+        hotelListContainer.classList.add('active');
+        console.log('View switched to hotels list');
+        
+        // Load hotels if not already loaded
+        loadHotels();
+    });
+    
+    // Load hotels from all heritage sites
+    let hotelsLoaded = false;
+    
+    function loadHotels() {
+        console.log('loadHotels() called');
+        if (hotelsLoaded) {
+            console.log('Hotels already loaded, skipping');
+            return;
+        }
+        
+        const hotelsList = document.getElementById('hotelsList');
+        console.log('hotelsList element:', hotelsList);
+        
+        // Fetch hotels from API
+        console.log('Fetching hotels from /api/hotels/all');
+        fetch('/api/hotels/all')
+            .then(response => {
+                console.log('API response received:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Hotels data:', data);
+                hotelsLoaded = true;
+                
+                if (data.hotels && data.hotels.length > 0) {
+                    let hotelsHTML = '<div class="row">';
+                    
+                    data.hotels.forEach(hotel => {
+                        const imageUrl = hotel.image || `https://placehold.co/400x300/4ECDC4/FFFFFF?text=Hotel`;
+                        const rating = hotel.rating ? `<span class="hotel-card-rating"><i class="bi bi-star-fill"></i> ${hotel.rating}</span>` : '';
+                        
+                        hotelsHTML += `
+                            <div class="col-md-6 mb-4">
+                                <div class="hotel-card">
+                                    <img src="${imageUrl}" alt="${hotel.name}" class="hotel-card-img">
+                                    <div class="hotel-card-body">
+                                        <h5 class="hotel-card-title">${hotel.name}</h5>
+                                        <p class="hotel-card-location">
+                                            <i class="bi bi-geo-alt-fill text-danger"></i> ${hotel.location}
+                                        </p>
+                                        <p class="hotel-card-location">
+                                            <i class="bi bi-pin-map-fill text-primary"></i> Near: ${hotel.heritage_name}
+                                        </p>
+                                        <div class="mb-2">
+                                            ${rating}
+                                            <span class="badge bg-info ms-2">${hotel.state}</span>
+                                        </div>
+                                        <div class="hotel-card-price">₹${hotel.price_per_night.toLocaleString()}<small class="text-muted"> / night</small></div>
+                                        <p class="text-muted small mt-2">${hotel.description ? hotel.description.substring(0, 100) + '...' : 'No description available'}</p>
+                                        <div class="d-grid gap-2 mt-3">
+                                            <a href="/hotel/book/${hotel.id}" class="btn btn-primary">
+                                                <i class="bi bi-calendar-check"></i> Book Now
+                                            </a>
+                                            <a href="/heritage/${hotel.heritage_id}" class="btn btn-outline-secondary btn-sm">
+                                                <i class="bi bi-info-circle"></i> View Heritage Site
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    hotelsHTML += '</div>';
+                    hotelsList.innerHTML = hotelsHTML;
+                } else {
+                    hotelsList.innerHTML = `
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> No hotels available at the moment.
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading hotels:', error);
+                hotelsList.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i> Error loading hotels. Please try again later.
+                    </div>
+                `;
+            });
+    }
+    
+}); // End of DOMContentLoaded
+</script>
+{% endblock %}

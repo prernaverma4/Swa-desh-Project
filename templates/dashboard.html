@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Digital Catalyst{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="section-title">
+                <i class="bi bi-speedometer2 me-2"></i>Analytics Dashboard
+            </h1>
+            <p class="text-muted">Real-time insights into India's heritage preservation and artisan economy</p>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="stat-card orange">
+                <div class="stat-icon" style="color: var(--accent-saffron);">
+                    <i class="bi bi-building"></i>
+                </div>
+                <div class="stat-value">{{ stats.total_heritage_sites }}</div>
+                <div class="stat-label">Heritage Sites</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="stat-card teal">
+                <div class="stat-icon" style="color: var(--secondary-teal);">
+                    <i class="bi bi-palette"></i>
+                </div>
+                <div class="stat-value">{{ stats.total_artisans }}</div>
+                <div class="stat-label">Artisans</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="stat-card gold">
+                <div class="stat-icon" style="color: var(--accent-gold);">
+                    <i class="bi bi-geo-alt"></i>
+                </div>
+                <div class="stat-value">{{ stats.total_states }}</div>
+                <div class="stat-label">States Covered</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="stat-card coral">
+                <div class="stat-icon" style="color: var(--accent-coral);">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="stat-value">{{ "%.1f"|format((stats.total_visitors or 0) / 1000000) }}M</div>
+                <div class="stat-label">Annual Visitors</div>
+            </div>
+        </div>
+    </div>
+    
+    <hr class="divider">
+    
+    <!-- AI Recommendations -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <i class="bi bi-stars me-2"></i>AI-Recommended Heritage Sites
+                </div>
+                <div class="card-body-custom">
+                    {% if recommended_sites %}
+                        {% for site in recommended_sites[:5] %}
+                        <a href="{{ url_for('heritage_detail', id=site.id) }}" class="recommendation-card recommendation-card-link text-decoration-none d-block">
+                            <div class="row align-items-center g-2">
+                                <div class="col-auto">
+                                    <img src="{{ site.image_or_placeholder() }}" alt="{{ site.name }}" class="rounded" width="64" height="64" style="object-fit: cover;">
+                                </div>
+                                <div class="col">
+                                    <h5 style="color: var(--primary-navy); margin-bottom: 0.5rem;">
+                                        <i class="bi bi-award me-2" style="color: var(--accent-gold);"></i>{{ site.name }}
+                                    </h5>
+                                    <p class="mb-1"><span class="badge badge-teal">{{ site.category }}</span> <span class="badge badge-orange">{{ site.state }}</span></p>
+                                    <p class="mb-0" style="font-size: 0.9rem; color: var(--text-muted);">
+                                        <i class="bi bi-people-fill me-1"></i>{{ "{:,}".format(site.annual_visitors) }} annual visitors
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center py-4">No heritage sites data available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <i class="bi bi-currency-rupee me-2"></i>Economic Impact Analysis
+                </div>
+                <div class="card-body-custom">
+                    <div class="mb-3 p-3" style="background: rgba(255, 107, 53, 0.1); border-radius: 10px;">
+                        <h6 style="color: var(--primary-navy); margin-bottom: 0.5rem;">Tourism Revenue (Est.)</h6>
+                        <h3 style="color: var(--accent-saffron); margin: 0;">₹{{ "{:,.0f}".format((economic_impact.tourism_revenue or 0) / 10000000) }} Cr</h3>
+                    </div>
+                    
+                    <div class="mb-3 p-3" style="background: rgba(44, 110, 124, 0.1); border-radius: 10px;">
+                        <h6 style="color: var(--primary-navy); margin-bottom: 0.5rem;">Artisan Revenue (Est.)</h6>
+                        <h3 style="color: var(--secondary-teal); margin: 0;">₹{{ "{:,.0f}".format((economic_impact.artisan_revenue or 0) / 10000000) }} Cr</h3>
+                    </div>
+                    
+                    <div class="p-3" style="background: rgba(212, 175, 55, 0.1); border-radius: 10px;">
+                        <h6 style="color: var(--primary-navy); margin-bottom: 0.5rem;">Total Economic Impact</h6>
+                        <h3 style="color: var(--accent-gold); margin: 0;">₹{{ "{:,.0f}".format((economic_impact.total_economic_impact or 0) / 10000000) }} Cr</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts -->
+    <div class="row mb-4">
+        <div class="col-md-8 mb-4">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <i class="bi bi-bar-chart me-2"></i>Visitor Trends - Top Heritage Sites
+                </div>
+                <div class="card-body-custom">
+                    <div class="chart-container">
+                        <canvas id="visitorChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <i class="bi bi-pie-chart me-2"></i>State-wise Artisan Distribution
+                </div>
+                <div class="card-body-custom">
+                    <div class="chart-container">
+                        <canvas id="stateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <i class="bi bi-lightning me-2"></i>Quick Actions
+                </div>
+                <div class="card-body-custom">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('add_heritage') }}" class="btn btn-custom-primary w-100">
+                                <i class="bi bi-plus-circle me-2"></i>Add Heritage Site
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('add_artisan') }}" class="btn btn-custom-primary w-100">
+                                <i class="bi bi-plus-circle me-2"></i>Add Artisan
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('export_heritage') }}" class="btn btn-custom-secondary w-100">
+                                <i class="bi bi-download me-2"></i>Export Heritage
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('export_artisans') }}" class="btn btn-custom-secondary w-100">
+                                <i class="bi bi-download me-2"></i>Export Artisans
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Visitor Trends Chart
+    const visitorCanvas = document.getElementById('visitorChart');
+    if (visitorCanvas) {
+        const visitorCtx = visitorCanvas.getContext('2d');
+        const visitorLabels = {{ (visitor_trends['labels'] or []) | tojson }};
+        const visitorValues = {{ (visitor_trends['values'] or []) | tojson }};
+        new Chart(visitorCtx, {
+            type: 'bar',
+            data: {
+                labels: visitorLabels,
+                datasets: [{
+                    label: 'Annual Visitors',
+                    data: visitorValues,
+                backgroundColor: 'rgba(255, 107, 53, 0.8)',
+                borderColor: 'rgba(255, 107, 53, 1)',
+                borderWidth: 2,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return (value / 1000000).toFixed(1) + 'M';
+                        }
+                    }
+                }
+            }
+        }
+        });
+    }
+    
+    // State Distribution Chart
+    const stateCanvas = document.getElementById('stateChart');
+    if (stateCanvas) {
+        const stateCtx = stateCanvas.getContext('2d');
+        const stateData = {{ (state_distribution or {}) | tojson }};
+    
+        new Chart(stateCtx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(stateData),
+            datasets: [{
+                data: Object.values(stateData),
+                backgroundColor: [
+                    'rgba(255, 107, 53, 0.8)',
+                    'rgba(44, 110, 124, 0.8)',
+                    'rgba(212, 175, 55, 0.8)',
+                    'rgba(255, 140, 97, 0.8)',
+                    'rgba(10, 35, 66, 0.8)',
+                    'rgba(45, 106, 79, 0.8)'
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+        });
+    }
+</script>
+{% endblock %}

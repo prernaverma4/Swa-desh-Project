@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Button Fix</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .btn { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-outline-primary { background: white; color: #007bff; border: 2px solid #007bff; }
+        .container { border: 1px solid #ddd; padding: 20px; margin: 10px 0; }
+        .active { display: block; }
+        .inactive { display: none; }
+        #status { padding: 10px; margin: 10px 0; background: #d4edda; color: #155724; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Button Click Test</h1>
+    <p>This tests if the button click event works after wrapping in DOMContentLoaded</p>
+    
+    <div>
+        <button type="button" class="btn btn-primary" id="mapViewBtn">Map View</button>
+        <button type="button" class="btn btn-outline-primary" id="hotelViewBtn">Hotels List</button>
+    </div>
+    
+    <div id="status">Click "Hotels List" button above</div>
+    
+    <div id="mapContainer" class="container active">
+        <h3>Map View</h3>
+        <p>This is the map container</p>
+    </div>
+    
+    <div id="hotelListContainer" class="container inactive">
+        <h3>Hotels List View</h3>
+        <p>This is the hotels list container</p>
+        <div id="hotelsList">Hotels will load here...</div>
+    </div>
+    
+    <script>
+        // Wrap in DOMContentLoaded - THIS IS THE FIX!
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, attaching event listeners...');
+            
+            const mapViewBtn = document.getElementById('mapViewBtn');
+            const hotelViewBtn = document.getElementById('hotelViewBtn');
+            const mapContainer = document.getElementById('mapContainer');
+            const hotelListContainer = document.getElementById('hotelListContainer');
+            const status = document.getElementById('status');
+            
+            // Check if elements exist
+            if (!mapViewBtn || !hotelViewBtn) {
+                status.innerHTML = '❌ ERROR: Buttons not found!';
+                status.style.background = '#f8d7da';
+                status.style.color = '#721c24';
+                return;
+            }
+            
+            status.innerHTML = '✅ Buttons found! Event listeners attached. Try clicking "Hotels List"';
+            
+            mapViewBtn.addEventListener('click', function() {
+                console.log('Map View clicked');
+                status.innerHTML = '✅ Map View clicked!';
+                
+                mapViewBtn.classList.add('btn-primary');
+                mapViewBtn.classList.remove('btn-outline-primary');
+                hotelViewBtn.classList.remove('btn-primary');
+                hotelViewBtn.classList.add('btn-outline-primary');
+                
+                mapContainer.classList.remove('inactive');
+                mapContainer.classList.add('active');
+                hotelListContainer.classList.remove('active');
+                hotelListContainer.classList.add('inactive');
+            });
+            
+            hotelViewBtn.addEventListener('click', function() {
+                console.log('Hotels List clicked');
+                status.innerHTML = '✅ Hotels List clicked! Loading hotels...';
+                
+                hotelViewBtn.classList.add('btn-primary');
+                hotelViewBtn.classList.remove('btn-outline-primary');
+                mapViewBtn.classList.remove('btn-primary');
+                mapViewBtn.classList.add('btn-outline-primary');
+                
+                mapContainer.classList.remove('active');
+                mapContainer.classList.add('inactive');
+                hotelListContainer.classList.remove('inactive');
+                hotelListContainer.classList.add('active');
+                
+                // Simulate loading hotels
+                setTimeout(function() {
+                    document.getElementById('hotelsList').innerHTML = `
+                        <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                            <h4>Oberoi Amarvilas</h4>
+                            <p>Location: Agra, Uttar Pradesh</p>
+                            <p>Price: ₹45,000 / night</p>
+                            <button class="btn btn-primary">Book Now</button>
+                        </div>
+                        <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                            <h4>The Gateway Hotel</h4>
+                            <p>Location: Agra, Uttar Pradesh</p>
+                            <p>Price: ₹8,500 / night</p>
+                            <button class="btn btn-primary">Book Now</button>
+                        </div>
+                    `;
+                    status.innerHTML = '✅ Hotels loaded successfully!';
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>

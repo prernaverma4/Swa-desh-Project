@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard - Digital Catalyst{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <h1 class="section-title mb-4">
+        <i class="bi bi-graph-up me-2"></i>Analytics Dashboard
+    </h1>
+
+    <!-- Total Counts Row -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom text-center">
+                    <i class="bi bi-people-fill" style="font-size: 2.5rem; color: var(--primary-teal);"></i>
+                    <h3 class="mt-2 mb-0">{{ analytics.total_users }}</h3>
+                    <p class="text-muted mb-0">Total Users</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom text-center">
+                    <i class="bi bi-briefcase-fill" style="font-size: 2.5rem; color: var(--accent-saffron);"></i>
+                    <h3 class="mt-2 mb-0">{{ analytics.total_manufacturers }}</h3>
+                    <p class="text-muted mb-0">Manufacturers</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom text-center">
+                    <i class="bi bi-building" style="font-size: 2.5rem; color: var(--secondary-coral);"></i>
+                    <h3 class="mt-2 mb-0">{{ analytics.total_heritage_sites }}</h3>
+                    <p class="text-muted mb-0">Heritage Sites</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom text-center">
+                    <i class="bi bi-palette-fill" style="font-size: 2.5rem; color: var(--accent-gold);"></i>
+                    <h3 class="mt-2 mb-0">{{ analytics.total_artisans }}</h3>
+                    <p class="text-muted mb-0">Artisans</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Heritage Site Analytics -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <h5 class="mb-3"><i class="bi bi-trophy-fill me-2" style="color: var(--accent-gold);"></i>Most
+                        Visited Heritage Site</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">{{ analytics.most_visited_site.name }}</h4>
+                            <p class="text-muted mb-0">{{ "{:,}".format(analytics.most_visited_site.visitors) }} annual
+                                visitors</p>
+                        </div>
+                        <i class="bi bi-people-fill"
+                            style="font-size: 3rem; color: var(--primary-teal); opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <h5 class="mb-3"><i class="bi bi-eye-fill me-2" style="color: var(--primary-teal);"></i>Most Viewed
+                        Heritage Site</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">{{ analytics.most_viewed_site.name }}</h4>
+                            <p class="text-muted mb-0">{{ "{:,}".format(analytics.most_viewed_site.view_count_temp) }}
+                                views</p>
+                        </div>
+                        <i class="bi bi-eye-fill"
+                            style="font-size: 3rem; color: var(--primary-teal); opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <h5 class="mb-3"><i class="bi bi-bookmark-fill me-2" style="color: var(--accent-saffron);"></i>Most
+                        Bookmarked Site</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">{{ analytics.most_bookmarked_site.name }}</h4>
+                            <p class="text-muted mb-0">{{ "{:,}".format(analytics.most_bookmarked_site.bookmark_count)
+                                }} bookmarks</p>
+                        </div>
+                        <i class="bi bi-bookmark-fill"
+                            style="font-size: 3rem; color: var(--accent-saffron); opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <h5 class="mb-3"><i class="bi bi-star-fill me-2" style="color: var(--accent-gold);"></i>Highest
+                        Rated Site</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">{{ analytics.highest_rated_site.name }}</h4>
+                            <p class="text-muted mb-0">{{ analytics.highest_rated_site.avg_rating }}/5.0 ({{
+                                analytics.highest_rated_site.review_count }} reviews)</p>
+                        </div>
+                        <i class="bi bi-star-fill"
+                            style="font-size: 3rem; color: var(--accent-gold); opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <h5 class="mb-3"><i class="bi bi-geo-alt-fill me-2" style="color: var(--secondary-coral);"></i>Most
+                        Active State</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">{{ analytics.most_active_state.name }}</h4>
+                            <p class="text-muted mb-0">{{ analytics.most_active_state.site_count }} heritage sites</p>
+                        </div>
+                        <i class="bi bi-map-fill"
+                            style="font-size: 3rem; color: var(--accent-saffron); opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- State Distribution -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <h5 class="mb-3"><i class="bi bi-bar-chart-fill me-2"></i>State-wise Heritage Site Distribution</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>State</th>
+                                    <th>Number of Sites</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in analytics.state_distribution %}
+                                <tr>
+                                    <td><strong>{{ item.state }}</strong></td>
+                                    <td>{{ item.count }}</td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar" role="progressbar"
+                                                style="width: {{ (item.count / analytics.total_heritage_sites * 100)|round(1) }}%; background-color: var(--primary-teal);"
+                                                aria-valuenow="{{ item.count }}" aria-valuemin="0"
+                                                aria-valuemax="{{ analytics.total_heritage_sites }}">
+                                                {{ (item.count / analytics.total_heritage_sites * 100)|round(1) }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Artisan Analytics -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <h5 class="mb-3"><i class="bi bi-star-fill me-2" style="color: var(--accent-gold);"></i>Most Popular
+                        Craft</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">{{ analytics.most_popular_craft.name }}</h4>
+                            <p class="text-muted mb-0">{{ analytics.most_popular_craft.artisan_count }} artisans</p>
+                        </div>
+                        <i class="bi bi-palette-fill"
+                            style="font-size: 3rem; color: var(--accent-gold); opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <h5 class="mb-3"><i class="bi bi-bag-fill me-2" style="color: var(--secondary-coral);"></i>Product
+                        Analytics</h5>
+                    <div class="row">
+                        <div class="col-6">
+                            <p class="text-muted mb-1">Total Products</p>
+                            <h4 class="mb-0">{{ analytics.total_products }}</h4>
+                        </div>
+                        <div class="col-6">
+                            <p class="text-muted mb-1">Avg Price</p>
+                            <h4 class="mb-0">₹{{ "{:,.0f}".format(analytics.avg_product_price) }}</h4>
+                        </div>
+                    </div>
+                    <hr>
+                    <p class="text-muted mb-1">Total Inventory Value</p>
+                    <h4 class="mb-0">₹{{ "{:,.0f}".format(analytics.total_inventory_value) }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Average Price by Craft -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <h5 class="mb-3"><i class="bi bi-currency-rupee me-2"></i>Average Product Price by Craft</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Craft</th>
+                                    <th>Average Price</th>
+                                    <th>Price Range</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in analytics.avg_price_by_craft %}
+                                <tr>
+                                    <td><strong>{{ item.craft }}</strong></td>
+                                    <td>₹{{ "{:,.2f}".format(item.avg_price) }}</td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            {% set max_price = analytics.avg_price_by_craft[0].avg_price %}
+                                            <div class="progress-bar" role="progressbar"
+                                                style="width: {{ (item.avg_price / max_price * 100)|round(1) }}%; background-color: var(--accent-saffron);"
+                                                aria-valuenow="{{ item.avg_price }}" aria-valuemin="0"
+                                                aria-valuemax="{{ max_price }}">
+                                                {{ (item.avg_price / max_price * 100)|round(1) }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hotel Booking Analytics -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3"><i class="bi bi-building me-2"></i>Hotel Booking Analytics</h3>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom text-center">
+                    <i class="bi bi-building" style="font-size: 2.5rem; color: var(--primary-teal);"></i>
+                    <h3 class="mt-2 mb-0">{{ analytics.total_hotels }}</h3>
+                    <p class="text-muted mb-0">Total Hotels</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom text-center">
+                    <i class="bi bi-calendar-check" style="font-size: 2.5rem; color: var(--accent-saffron);"></i>
+                    <h3 class="mt-2 mb-0">{{ analytics.total_bookings }}</h3>
+                    <p class="text-muted mb-0">Total Bookings</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom text-center">
+                    <i class="bi bi-check-circle-fill" style="font-size: 2.5rem; color: #28a745;"></i>
+                    <h3 class="mt-2 mb-0">{{ analytics.confirmed_bookings }}</h3>
+                    <p class="text-muted mb-0">Confirmed Bookings</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom text-center">
+                    <i class="bi bi-currency-rupee" style="font-size: 2.5rem; color: var(--accent-gold);"></i>
+                    <h3 class="mt-2 mb-0">₹{{ "{:,.0f}".format(analytics.total_revenue) }}</h3>
+                    <p class="text-muted mb-0">Total Revenue</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card-custom">
+                <div class="card-body-custom">
+                    <h5 class="mb-3"><i class="bi bi-star-fill me-2" style="color: var(--accent-gold);"></i>Most Booked
+                        Hotel</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">{{ analytics.most_booked_hotel.name }}</h4>
+                            <p class="text-muted mb-0">{{ "{:,}".format(analytics.most_booked_hotel.booking_count) }}
+                                bookings</p>
+                        </div>
+                        <i class="bi bi-building"
+                            style="font-size: 3rem; color: var(--primary-teal); opacity: 0.3;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic Note -->
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        <strong>Academic Note:</strong> This analytics dashboard demonstrates SQL aggregation functions (COUNT, AVG,
+        SUM, GROUP BY)
+        for data analysis. All calculations are performed at the database level for optimal performance.
+    </div>
+</div>
+{% endblock %}

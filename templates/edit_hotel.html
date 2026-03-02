@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Hotel - Digital Catalyst{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('heritage_detail', id=hotel.heritage_id) }}">{{ hotel.heritage_site.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit Hotel</li>
+        </ol>
+    </nav>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <i class="bi bi-pencil me-2"></i>Edit Hotel: {{ hotel.name }}
+                </div>
+                <div class="card-body-custom">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name" class="form-label form-label-custom">Hotel Name *</label>
+                            <input type="text" class="form-control form-control-custom" id="name" name="name" 
+                                   value="{{ hotel.name }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="location" class="form-label form-label-custom">Full Address *</label>
+                            <input type="text" class="form-control form-control-custom" id="location" name="location" 
+                                   value="{{ hotel.location }}" required>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="state" class="form-label form-label-custom">State *</label>
+                                <input type="text" class="form-control form-control-custom" id="state" name="state" 
+                                       value="{{ hotel.state }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="price_per_night" class="form-label form-label-custom">Price Per Night (₹) *</label>
+                                <input type="number" step="0.01" class="form-control form-control-custom" 
+                                       id="price_per_night" name="price_per_night" value="{{ hotel.price_per_night }}" min="0" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="rating" class="form-label form-label-custom">Rating (1.0 - 5.0)</label>
+                            <input type="number" step="0.1" class="form-control form-control-custom" 
+                                   id="rating" name="rating" value="{{ hotel.rating or '' }}" min="1.0" max="5.0">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="image" class="form-label form-label-custom">Hotel Image URL</label>
+                            <input type="url" class="form-control form-control-custom" id="image" name="image" 
+                                   value="{{ hotel.image or '' }}">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="description" class="form-label form-label-custom">Description</label>
+                            <textarea class="form-control form-control-custom" id="description" name="description" 
+                                      rows="4">{{ hotel.description }}</textarea>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-custom-primary">
+                                <i class="bi bi-save me-2"></i>Update Hotel
+                            </button>
+                            <a href="{{ url_for('heritage_detail', id=hotel.heritage_id) }}" class="btn btn-custom-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="button" class="btn btn-danger ms-auto" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="bi bi-trash me-2"></i>Delete Hotel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete <strong>{{ hotel.name }}</strong>? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" action="{{ url_for('delete_hotel', id=hotel.id) }}" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete Hotel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

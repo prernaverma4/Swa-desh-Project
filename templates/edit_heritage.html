@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Heritage Site - Digital Catalyst{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <i class="bi bi-pencil me-2"></i>Edit Heritage Site
+                </div>
+                <div class="card-body-custom">
+                    <form method="POST" action="{{ url_for('edit_heritage', id=site.id) }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name" class="form-label form-label-custom">Site Name *</label>
+                            <input type="text" class="form-control form-control-custom" id="name" name="name" 
+                                   value="{{ site.name }}" required>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="state" class="form-label form-label-custom">State *</label>
+                                <input type="text" class="form-control form-control-custom" id="state" name="state" 
+                                       value="{{ site.state }}" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="category" class="form-label form-label-custom">Category *</label>
+                                <select class="form-control form-control-custom" id="category" name="category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Monument" {% if site.category == 'Monument' %}selected{% endif %}>Monument</option>
+                                    <option value="Fort" {% if site.category == 'Fort' %}selected{% endif %}>Fort</option>
+                                    <option value="Temple" {% if site.category == 'Temple' %}selected{% endif %}>Temple</option>
+                                    <option value="Palace" {% if site.category == 'Palace' %}selected{% endif %}>Palace</option>
+                                    <option value="Archaeological Site" {% if site.category == 'Archaeological Site' %}selected{% endif %}>Archaeological Site</option>
+                                    <option value="Cave Temple" {% if site.category == 'Cave Temple' %}selected{% endif %}>Cave Temple</option>
+                                    <option value="Museum" {% if site.category == 'Museum' %}selected{% endif %}>Museum</option>
+                                    <option value="Other" {% if site.category == 'Other' %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="annual_visitors" class="form-label form-label-custom">Annual Visitors</label>
+                            <input type="number" class="form-control form-control-custom" id="annual_visitors" 
+                                   name="annual_visitors" min="0" value="{{ site.annual_visitors }}">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="latitude" class="form-label form-label-custom">Latitude</label>
+                                <input type="number" step="0.000001" class="form-control form-control-custom" 
+                                       id="latitude" name="latitude" value="{{ site.latitude or '' }}" placeholder="e.g., 28.6139">
+                                <small class="text-muted">Geographic latitude for map display</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="longitude" class="form-label form-label-custom">Longitude</label>
+                                <input type="number" step="0.000001" class="form-control form-control-custom" 
+                                       id="longitude" name="longitude" value="{{ site.longitude or '' }}" placeholder="e.g., 77.2090">
+                                <small class="text-muted">Geographic longitude for map display</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="image" class="form-label form-label-custom">Upload New Image</label>
+                            <input type="file" class="form-control form-control-custom" id="image" name="image" accept="image/*">
+                            <small class="text-muted">Allowed: PNG, JPG, JPEG, GIF, WEBP (Max 5MB). Leave empty to keep current image.</small>
+                            {% if site.image_url %}
+                            <div class="mt-2">
+                                <small class="text-muted">Current: {{ site.image_url }}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="image_url" class="form-label form-label-custom">Or Update Image URL</label>
+                            <input type="url" class="form-control form-control-custom" id="image_url" name="image_url" 
+                                   value="{{ site.image_url or '' }}" placeholder="https://example.com/image.jpg (optional)">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="description" class="form-label form-label-custom">Description</label>
+                            <textarea class="form-control form-control-custom" id="description" name="description" 
+                                      rows="4">{{ site.description }}</textarea>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-custom-primary">
+                                <i class="bi bi-save me-2"></i>Update Heritage Site
+                            </button>
+                            <a href="{{ url_for('heritage_list') }}" class="btn btn-custom-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

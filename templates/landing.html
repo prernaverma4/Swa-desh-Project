@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}Digital Catalyst – Heritage & Economic Growth{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Prevent scrolling while preloader is active */
+    body.preloading {
+        overflow: hidden;
+        height: 100vh;
+    }
+
+    #preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #000;
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 1.2s cubic-bezier(0.77, 0, 0.175, 1), visibility 1.2s;
+        /* Center the canvas */
+        overflow: hidden;
+    }
+
+    #hero-video {
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+    }
+
+    #loading-text {
+        position: absolute;
+        bottom: 50px;
+        color: rgba(255, 255, 255, 0.6);
+        font-family: 'Work Sans', sans-serif;
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        animation: pulse 1.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+        0% {
+            opacity: 0.3;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    /* Reveal animation for landing page content */
+    .landing-page {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 1.2s cubic-bezier(0.77, 0, 0.175, 1) 0.3s,
+            transform 1.2s cubic-bezier(0.77, 0, 0.175, 1) 0.3s;
+    }
+
+    body:not(.preloading) .landing-page {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+<script>
+    // Keep it here to prevent flashing
+    document.body.classList.add('preloading');
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="preloader">
+    <video id="hero-video" src="{{ url_for('static', filename='img/preloader/intro.mp4') }}" autoplay
+        playsinline></video>
+    <div id="loading-text">Loading Experience...</div>
+</div>
+
+<div class="landing-page">
+    <!-- Hero -->
+    <section class="landing-hero py-5">
+        <div class="landing-hero-bg"></div>
+        <div class="container position-relative mt-5">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="landing-hero-content">
+                        <div class="landing-hero-badge text-uppercase tracking-wide mb-4"
+                            style="letter-spacing: 2px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">
+                            <i class="bi bi-hexagon-fill me-2" style="color: var(--primary-navy);"></i>AI-Driven
+                            Platform
+                        </div>
+                        <h1 class="landing-hero-title display-3 fw-normal mb-4" style="color: var(--primary-navy);">
+                            Empower India's Heritage & Economy</h1>
+                        <p class="landing-hero-subtitle lead mb-5" style="color: var(--text-muted);">
+                            Manage heritage sites, support artisans, and grow with real-time analytics. <br
+                                class="d-none d-md-block">
+                            One platform for preservation and economic impact.
+                        </p>
+                        <div class="landing-hero-cta d-flex justify-content-center gap-3">
+                            <a href="{{ url_for('login') }}" class="btn btn-landing btn-landing-primary">
+                                Sign In
+                            </a>
+                            <a href="{{ url_for('login') }}?tab=manufacturer"
+                                class="btn btn-landing btn-landing-outline"
+                                style="border-color: var(--primary-navy); color: var(--primary-navy);">
+                                Login as Manufacturer
+                            </a>
+                            <a href="{{ url_for('register') }}" class="btn btn-landing text-decoration-underline"
+                                style="color: var(--primary-navy);">
+                                Register
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="landing-features py-5 mt-5">
+        <div class="container py-5">
+            <h2 class="landing-section-title text-center mb-5 pb-3">Why Digital Catalyst?</h2>
+            <div class="row g-5">
+                <div class="col-md-4">
+                    <div class="landing-feature-card text-center">
+                        <div class="landing-feature-icon"><i class="bi bi-building"></i></div>
+                        <h3>Heritage Sites</h3>
+                        <p>Track and manage heritage sites across India with analytics and AI recommendations.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="landing-feature-card text-center">
+                        <div class="landing-feature-icon"><i class="bi bi-palette"></i></div>
+                        <h3>Artisans & MSME</h3>
+                        <p>Support traditional artisans, list crafts, and measure economic impact.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="landing-feature-card text-center">
+                        <div class="landing-feature-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                        <h3>Analytics & Export</h3>
+                        <p>Dashboards, charts, and CSV export for reporting and growth.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA strip -->
+    <section class="landing-cta-strip py-5">
+        <div class="container text-center py-4">
+            <h4 class="mb-4 display-6 fw-normal">Ready to get started?</h4>
+            <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg px-5 border-2 rounded-0">
+                Full Login Page
+            </a>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const video = document.getElementById("hero-video");
+        const preloader = document.getElementById('preloader');
+        const loadingText = document.getElementById("loading-text");
+
+        // Hide loading text when video starts playing
+        video.addEventListener('playing', () => {
+            if (loadingText) loadingText.style.display = 'none';
+        });
+
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(() => {
+                // Autoplay blocked because of sound
+                if (loadingText) {
+                    loadingText.innerHTML = 'Click anywhere to enter with sound...';
+                    loadingText.style.cursor = 'pointer';
+                }
+
+                if (preloader) {
+                    preloader.style.cursor = 'pointer';
+                    preloader.addEventListener('click', function startVideo() {
+                        video.play();
+                        preloader.removeEventListener('click', startVideo);
+                        preloader.style.cursor = 'default';
+                        if (loadingText) loadingText.style.display = 'none';
+                    }, { once: true });
+                }
+            });
+        }
+
+        const endPreloader = () => {
+            // Slight delay then fade out
+            setTimeout(() => {
+                if (preloader) {
+                    preloader.style.opacity = '0';
+                    preloader.style.visibility = 'hidden';
+                }
+                document.body.classList.remove('preloading');
+
+                // Allow removing it from DOM completely after fade out completes
+                setTimeout(() => {
+                    if (preloader) preloader.remove();
+                }, 1200);
+            }, 300);
+        };
+
+        video.addEventListener("ended", () => {
+            endPreloader();
+        });
+
+        // Backup in case video fails to load or play
+        video.addEventListener("error", () => {
+            console.error("Video failed to load");
+            endPreloader();
+        });
+
+        // Fallback in case autoplay evaluates as blocked, though muted should work
+        setTimeout(() => {
+            if (document.body.classList.contains('preloading')) {
+                endPreloader();
+            }
+        }, 8000);
+    });
+</script>
+{% endblock %}

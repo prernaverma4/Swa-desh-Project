@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}My Bookmarks - Digital Catalyst{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-bookmark"></i> My Bookmarks
+                <span class="badge bg-primary">{{ bookmarks|length }}</span>
+            </h2>
+            
+            {% if bookmarked_sites %}
+                <p class="text-muted">Heritage sites you've saved for later</p>
+                
+                <div class="row">
+                    {% for site in bookmarked_sites %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <img src="{{ site.image_or_placeholder() }}" 
+                                 class="card-img-top" 
+                                 alt="{{ site.name }}"
+                                 style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ site.name }}</h5>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt"></i> {{ site.state }}<br>
+                                        <i class="fas fa-tag"></i> {{ site.category }}
+                                    </small>
+                                </p>
+                                {% if site.description %}
+                                <p class="card-text">
+                                    {{ site.description[:100] }}{% if site.description|length > 100 %}...{% endif %}
+                                </p>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{{ url_for('heritage_detail', id=site.id) }}" 
+                                       class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </a>
+                                    <form method="POST" 
+                                          action="{{ url_for('remove_bookmark', heritage_id=site.id) }}"
+                                          style="display: inline;">
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Remove this bookmark?');">
+                                            <i class="fas fa-trash"></i> Remove
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <h4 class="alert-heading">No bookmarks yet!</h4>
+                    <p>You haven't bookmarked any heritage sites yet. Browse our collection and save your favorites for later.</p>
+                    <hr>
+                    <a href="{{ url_for('heritage_list') }}" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Explore Heritage Sites
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Digital Catalyst{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            {% if product.image_url %}
+            <img src="{{ product.image_url }}" class="img-fluid rounded shadow" alt="{{ product.name }}">
+            {% else %}
+            <div class="bg-secondary d-flex align-items-center justify-content-center rounded shadow"
+                style="height: 400px;">
+                <i class="fas fa-image fa-5x text-white"></i>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h2>{{ product.name }}</h2>
+            <p class="text-muted">By <a href="{{ url_for('artisan_products', artisan_id=product.artisan.id) }}">{{
+                    product.artisan.name }}</a></p>
+            <hr>
+            <h3 class="text-success">₹{{ product.price }}</h3>
+            <p><strong>Stock:</strong>
+                {% if product.stock > 0 %}
+                <span class="badge bg-success">{{ product.stock }} available</span>
+                {% else %}
+                <span class="badge bg-danger">Out of Stock</span>
+                {% endif %}
+            </p>
+            <hr>
+            <h5>Description</h5>
+            <p>{{ product.description or 'No description available.' }}</p>
+            <hr>
+            <h5>Artisan Details</h5>
+            <p><strong>Craft:</strong> {{ product.artisan.craft }}</p>
+            <p><strong>Location:</strong> {{ product.artisan.state }}</p>
+            <p><strong>Contact:</strong> {{ product.artisan.contact or 'N/A' }}</p>
+            <hr>
+            {% if current_user.is_authenticated and current_user.is_manufacturer() %}
+            <div class="alert alert-info border-0 shadow-sm mb-3">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-person-gear fs-4 me-2"></i>
+                    <div>
+                        <strong>Manufacturer View</strong><br>
+                        <small>You are viewing this product as a manufacturer.</small>
+                    </div>
+                </div>
+            </div>
+            <a href="{{ url_for('edit_product_2', id=product.id) }}"
+                class="btn btn-warning btn-lg w-100 mb-2 shadow-sm">
+                <i class="bi bi-pencil-square me-2"></i> Edit Product Details
+            </a>
+            <button type="button" class="btn btn-danger btn-lg w-100 mb-2 shadow-sm" data-bs-toggle="modal"
+                data-bs-target="#deleteModal">
+                <i class="bi bi-trash me-2"></i> Delete Product
+            </button>
+            <a href="{{ url_for('product_list_2') }}" class="btn btn-outline-secondary w-100">
+                <i class="bi bi-arrow-left me-2"></i> Back to My Products
+            </a>
+            {% else %}
+
+            {% if product.stock > 0 %}
+            <a href="{{ url_for('checkout', id=product.id) }}" class="btn btn-primary btn-lg w-100 shadow-sm">
+                <i class="bi bi-cart-plus me-2"></i> Buy Now
+            </a>
+            {% else %}
+            <button class="btn btn-secondary btn-lg w-100" disabled>
+                <i class="bi bi-slash-circle me-2"></i> Out of Stock
+            </button>
+            {% endif %}
+
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="deleteModalLabel">Delete Product?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-0">Are you sure you want to delete <strong>{{ product.name }}</strong>? This
+                    action
+                    cannot be undone.</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('delete_product_2', id=product.id) }}" method="POST" class="m-0">
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

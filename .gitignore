@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.db
+*.log
+.venv/
+venv/
+instance/
+.env
+.DS_Store
+cookies.txt
+*.swp
+*.swo
+*~
