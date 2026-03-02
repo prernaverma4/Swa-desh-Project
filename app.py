@@ -20,7 +20,12 @@ from types import SimpleNamespace
 # Initialize Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'digital-catalyst-secret-key-2026'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+# Setup DB URI with fallback for local testing vs Render Postgres
+db_url = os.environ.get('DATABASE_URL', 'sqlite:///database.db')
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     'pool_size': 10,
@@ -42,6 +47,13 @@ login_manager.login_view = 'landing'
 
 # Initialize ML engine
 ml_engine = RecommendationEngine()
+
+# Automatically create database tables when starting up (prevents 500 crashes on Render)
+with app.app_context():
+    try:
+        db.create_all()
+    except Exception as e:
+        print(f"Warning: Could not create tables: {e}")
 
 @login_manager.user_loader
 def load_user(user_id):
